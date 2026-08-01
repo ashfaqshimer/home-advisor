@@ -37,41 +37,67 @@
   just append a correction under it.
 -->
 
-**Feature:** <!-- e.g. "Property search filters (price range, bedrooms, location)" -->
+**Feature:** Hero Section
 
-**Spec:** <!-- context/features/<slug>/spec.md -->
+**Spec:** `context/features/hero-section/spec.md`
 
 **Goal:**
-<!-- One or two sentences. What does "done" look like from the user's POV? -->
+Replace the hero's four placeholder blocks with real content matching
+`context/ui-interface.png` — eyebrow pill, two-line serif headline, subcopy, and a
+dark-green pill CTA that jumps to the chat panel. A visitor should immediately
+understand what the site does and have one obvious action to take.
 
-**Status:** `Not started | In progress | Blocked | In review/testing | Done`
+**Status:** `In progress`
 
-**Branch:** <!-- e.g. feature/property-search-filters -->
+**Branch:** `feature/hero-section` (git worktree at `.claude/worktrees/hero-section`)
 
 ### Approach / Key Decisions
 <!--
   Why you're building it this way — especially anything non-obvious.
   This is the highest-value section: code shows WHAT, this shows WHY.
 -->
--
+- **Colours are sampled, not eyeballed.** Every brand value came out of
+  `context/ui-interface.png` pixel data, and lands as an `@theme` token in
+  `globals.css` rather than an inline arbitrary utility — the navbar, cards, and
+  footer all need the same green and the same band tone.
+- **No web fonts on this branch.** The mockup's headline is a high-contrast display
+  serif, but picking the real pairing is a global call affecting every later section.
+  Shipping a `--font-display` token pointed at a system serif stack gets the hero's
+  shape right now and makes the eventual swap a one-line change.
+- **CTA is an `<a href="#chat">`, not a button.** It works with no JS, is keyboard
+  reachable for free, and keeps working unchanged once the chat panel is real.
+  Costs one `id="chat"` on `ChatPanel`.
+- **Hero only.** The navbar shares the green pill and brand mark but stays
+  placeholdered, so this diff stays reviewable.
 
 ### Files Touched
 <!-- Running list so Claude Code doesn't have to grep the whole repo to find scope -->
--
+- `frontend/app/globals.css` — brand colour + `--font-display` tokens, smooth scroll
+- `frontend/components/layout/Hero.tsx` — the feature
+- `frontend/components/chat/ChatPanel.tsx` — `id="chat"` anchor target only
+- `frontend/tests/hero.test.tsx` — new
+- `frontend/tests/scope-boundaries.test.tsx` — hero is no longer content-free
 
 ### Open Questions / Blockers
 <!-- Anything unresolved. Delete once resolved, don't let these pile up stale. -->
--
+- None blocking. Deferred: the real font pairing (Playfair Display + DM Sans is the
+  leading candidate) needs its own typography feature.
 
 ### Next Steps
 <!-- Ordered, small, actionable. This is what Claude Code should tackle first. -->
-1.
-2.
-3.
+1. Add brand colour and `--font-display` tokens to `globals.css`.
+2. Rebuild `Hero.tsx`: eyebrow pill, `h1`, subcopy, CTA anchor with icon.
+3. Add `id="chat"` to `ChatPanel`; enable reduced-motion-safe smooth scroll.
+4. Write `tests/hero.test.tsx`; update the scope-boundaries test.
+5. `pnpm build` + `pnpm test`, then check 375px / 1440px in a browser.
 
 ### Explicitly Out of Scope (for now)
 <!-- Prevents Claude Code from "helpfully" expanding scope mid-task. -->
--
+- Web fonts / final typography pairing
+- Navbar (logo, nav links, header CTA stay placeholders)
+- A functioning chat panel — the CTA only anchors to it
+- Property grid, footer, background imagery
+- Dark mode
 
 ---
 
