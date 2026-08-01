@@ -37,41 +37,94 @@
   just append a correction under it.
 -->
 
-**Feature:** <!-- e.g. "Property search filters (price range, bedrooms, location)" -->
+**Feature:** Site Header
 
-**Spec:** <!-- context/features/<slug>/spec.md -->
+**Spec:** `context/features/site-header/spec.md`
 
 **Goal:**
-<!-- One or two sentences. What does "done" look like from the user's POV? -->
+Turn the navbar's placeholder slots into the real header from
+`context/ui-interface.png` — brand mark + "Terra & Co." wordmark, three centred
+nav links, dark pill "Chat with our AI Agent" CTA, and a working menu below `md`.
+First real region of the shell, so it also lands the brand-green and serif
+display tokens the hero and footer will reuse.
 
-**Status:** `Not started | In progress | Blocked | In review/testing | Done`
+**Status:** `In progress`
 
-**Branch:** <!-- e.g. feature/property-search-filters -->
+**Branch:** `feature/site-header` (worktree: `.claude/worktrees/feature+site-header`)
 
 ### Approach / Key Decisions
 <!--
   Why you're building it this way — especially anything non-obvious.
   This is the highest-value section: code shows WHAT, this shows WHY.
 -->
--
+- **In-page anchors, not routes.** Home → `/`, Listings → `#featured-properties`,
+  Contact → `#contact`, CTA → `#chat`. There's one page; `/listings` and
+  `/contact` would 404. Every link works today and needs no rework when those
+  regions become real.
+- **Anchor targets are owned by the header feature, minimally.** PropertyGrid,
+  ChatPanel, and Footer get an `id` + `scroll-mt-*` and nothing else. ChatPanel's
+  section also gets `tabIndex={-1}` — without it a `#chat` jump moves the
+  viewport but not keyboard focus.
+- **Only Navbar goes client-side.** The mobile menu needs `useState`; keeping
+  `"use client"` on Navbar (or a child of it) means `page.tsx` and the other
+  regions stay server components.
+- **Closed menu unmounts.** Hiding it with CSS would leave its links tabbable and
+  duplicated in the accessibility tree — and would make every `getByRole("link")`
+  in tests ambiguous.
+- **Stays non-sticky.** Carried over from the layout-shell decision: the mockup
+  shows no scroll state. Sticky is its own change if wanted.
+- **Tokens in `@theme`, not inline hex.** Brand green (CTA, mark, hover) and
+  `--font-serif` via `next/font/google`. Tailwind 4 here has no config file and
+  isn't getting one.
+- **Existing tests get re-scoped, not deleted.** `scope-boundaries.test.tsx`
+  asserts the homepage has zero `<a>`/headings — true only while every region is
+  a placeholder. Narrow those queries to exclude the header so the guard keeps
+  protecting the regions that *are* still unbuilt.
 
 ### Files Touched
 <!-- Running list so Claude Code doesn't have to grep the whole repo to find scope -->
--
+- `frontend/components/layout/Navbar.tsx` — the work
+- `frontend/app/layout.tsx` — serif font via `next/font/google`
+- `frontend/app/globals.css` — brand + font tokens in `@theme`
+- `frontend/components/properties/PropertyGrid.tsx` — `id="featured-properties"`
+- `frontend/components/chat/ChatPanel.tsx` — `id="chat"`, `tabIndex={-1}`
+- `frontend/components/layout/Footer.tsx` — `id="contact"`
+- `frontend/tests/regions.test.tsx` — rewrite the Navbar block
+- `frontend/tests/scope-boundaries.test.tsx` — re-scope to exclude the header
+- `frontend/tests/navbar.test.tsx` *(new)* — menu interaction
 
 ### Open Questions / Blockers
 <!-- Anything unresolved. Delete once resolved, don't let these pile up stale. -->
--
+- None blocking. Note that local `main` is **ahead of `origin/main`** — the whole
+  frontend scaffold is unpushed, and this branch was reset onto local `main`
+  after the worktree defaulted to the stale remote ref.
 
 ### Next Steps
 <!-- Ordered, small, actionable. This is what Claude Code should tackle first. -->
-1.
-2.
-3.
+1. Add brand-green scale + `--font-serif` to `@theme`; wire the serif face
+   through `next/font/google` in `app/layout.tsx`.
+2. Add `id`/`scroll-mt` (and `tabIndex={-1}` on the chat section) to the three
+   anchor targets.
+3. Build `Navbar`: brand link, desktop links, CTA pill, inline SVGs — drop
+   `Placeholder`.
+4. Add the mobile menu button and panel with `aria-expanded`/`aria-controls`,
+   Escape, outside-click, and link-click closing.
+5. Rewrite the Navbar tests, re-scope `scope-boundaries.test.tsx`, add the
+   interaction tests.
+6. `pnpm build` && `pnpm test` from `frontend/`, then check 375px and 1440px in a
+   browser — jsdom proves nothing visual.
 
 ### Explicitly Out of Scope (for now)
 <!-- Prevents Claude Code from "helpfully" expanding scope mid-task. -->
--
+- Sticky / scroll-shadow header.
+- Real `/listings` and `/contact` routes; any multi-page routing.
+- Opening, mounting, or focusing an actual chat *session* — the CTA only
+  navigates to the panel region, which is still a placeholder.
+- Hero, property card, chat panel, and footer content — only their anchor
+  attributes are touched.
+- Deleting `components/Placeholder.tsx`; other regions still use it.
+- Dark mode, theme switching, i18n.
+- Header search input or filters.
 
 ---
 
