@@ -4,7 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current state
 
-**The repo is pre-scaffold.** There is no application code, no `package.json`, no `requirements.txt`, and no commits on `main` yet — only the spec in [context/PROJECT_OVERVIEW.md](context/PROJECT_OVERVIEW.md), the workflow rules in [context/ai-interaction.md](context/ai-interaction.md), and the feature-tracking skills. Build commands below don't exist until the corresponding scaffold is created (Phase 1 of the spec).
+**Frontend is scaffolded; backend is not.** `frontend/` holds a fresh create-next-app install — Next **16.2.12**, React 19.2.4, Tailwind **v4**, TypeScript, pnpm. It's still the untouched default page. `backend/` does not exist yet: no `requirements.txt`, no Python code, no database. Backend build commands referenced below don't exist until that scaffold is created (Phase 1 of the spec).
+
+## Frontend: Next 16 + Tailwind 4
+
+**This is not the Next.js in your training data.** Next 16 has breaking changes to APIs, conventions, and file structure. Before writing frontend code, read the relevant guide under `frontend/node_modules/next/dist/docs/` (`01-app/` for App Router) rather than working from memory, and heed deprecation notices.
+
+Tailwind is **v4**, configured through `@theme` in `frontend/app/globals.css` via `@tailwindcss/postcss`. There is no `tailwind.config.ts` and one should not be added.
+
+Package manager is **pnpm**, installed inside `frontend/` with no root workspace — the repo root has no `package.json`. Run `pnpm build` / `pnpm dev` from `frontend/`. pnpm 10 blocks postinstall scripts by default; `sharp` and `unrs-resolver` are listed under `ignoredBuiltDependencies` in `frontend/pnpm-workspace.yaml`.
 
 ## What this is
 
@@ -35,12 +43,19 @@ All four skills live in [.claude/skills/](.claude/skills/). The tracker they rea
 
 ## Working rules (from context/ai-interaction.md)
 
-- **Never commit without explicit permission**, and never before `npm run build` passes. Fix build errors first.
+- **Never commit without explicit permission**, and never before `pnpm build` and `pnpm test` pass (from `frontend/`). Fix errors first.
 - Conventional commit messages (`feat:`, `fix:`, `chore:`). **No "Generated with Claude" or "Co-Authored-By" lines** — this repo explicitly opts out.
 - One branch per feature/fix; ask before deleting a branch after merge.
 - Make minimal changes. Don't refactor unrelated code, don't add unspecced features, don't delete files without asking.
 - If something isn't working after 2-3 attempts, stop and explain rather than trying more random fixes.
-- Verification is browser-based for now; unit tests come later.
+
+## Frontend testing
+
+Vitest + React Testing Library in `frontend/tests/`, run with `pnpm test` (`test:watch`, `test:coverage`). Config is `vitest.config.mts` — `.mts` deliberately, so Vite loads it as ESM instead of warning about CJS.
+
+**jsdom has no layout engine and does not apply Tailwind.** It cannot verify sticky positioning, column counts, responsive breakpoints, or overflow. Tests here cover DOM structure, landmarks, and scope boundaries (no images/links/headings in a shell that's meant to stay content-free); anything visual is still verified in a browser. Where a test asserts a Tailwind class, that's a regression guard against accidental deletion — it does not prove the layout works, and should say so in a comment.
+
+Testing Library's auto-cleanup only registers when Vitest globals are enabled. They aren't, so `tests/setup.ts` calls `afterEach(cleanup)` explicitly. Without it the DOM accumulates across tests in a file and queries start matching duplicates.
 
 ## Environment
 
