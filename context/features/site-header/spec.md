@@ -17,7 +17,9 @@ footer will reuse.
 - [ ] `frontend/components/layout/Navbar.tsx` imports no `Placeholder`; the
       component tree contains no dashed-border placeholder regions.
 - [ ] Header renders a brand link to `/` whose accessible name contains
-      "Terra & Co.", composed of an inline SVG mark plus the wordmark text.
+      "Terra & Co.", composed of an `aria-hidden` letter mark plus the wordmark
+      text. (Revised during build: a styled `<span>` beats an SVG here — an SVG
+      `<text>` node would mean fighting baseline metrics for one glyph.)
 - [ ] Wordmark renders in the serif display face (`font-serif` resolving to the
       new `--font-serif` token), not the body sans.
 - [ ] Three nav links render with these exact `href`s: Home → `/`,

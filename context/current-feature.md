@@ -48,7 +48,7 @@ nav links, dark pill "Chat with our AI Agent" CTA, and a working menu below `md`
 First real region of the shell, so it also lands the brand-green and serif
 display tokens the hero and footer will reuse.
 
-**Status:** `In progress`
+**Status:** `In review/testing`
 
 **Branch:** `feature/site-header` (worktree: `.claude/worktrees/feature+site-header`)
 
@@ -80,18 +80,37 @@ display tokens the hero and footer will reuse.
   asserts the homepage has zero `<a>`/headings — true only while every region is
   a placeholder. Narrow those queries to exclude the header so the guard keeps
   protecting the regions that *are* still unbuilt.
+- **`next/link` everywhere in the header, including hash anchors.** Forced by
+  `@next/next/no-html-link-for-pages` on the brand's `href="/"`; using `Link`
+  uniformly beats branching on `href.startsWith("#")` at every call site.
+- **`next/font/google` is stubbed under Vitest.** It isn't a runtime module —
+  Next's SWC plugin rewrites `Lora({...})` at build time, so Vitest sees a
+  non-callable import and any test that touches `app/layout.tsx` dies with
+  "Lora is not a function". Aliased to `tests/mocks/next-font-google.ts` in
+  `vitest.config.mts`. Fonts are named exports there, not a Proxy, so adding one
+  fails loudly instead of silently resolving.
+- **Mobile panel has no `<nav>` of its own.** It renders inside the header's
+  `aria-label="Main"` nav; a nested navigation landmark would announce the same
+  links twice and make `getAllByRole("navigation")` ambiguous.
 
 ### Files Touched
 <!-- Running list so Claude Code doesn't have to grep the whole repo to find scope -->
-- `frontend/components/layout/Navbar.tsx` — the work
-- `frontend/app/layout.tsx` — serif font via `next/font/google`
-- `frontend/app/globals.css` — brand + font tokens in `@theme`
+- `frontend/components/layout/Navbar.tsx` — brand, desktop row, slots
+- `frontend/components/layout/MobileMenu.tsx` *(new)* — the only client component
+- `frontend/components/layout/ChatCta.tsx` *(new)* — pill CTA, rendered in both
+  the desktop row and the mobile panel
+- `frontend/components/layout/nav-links.ts` *(new)* — shared link data; its own
+  module because Navbar imports MobileMenu, so either one holding it would cycle
+- `frontend/app/layout.tsx` — Lora via `next/font/google`, `lora.variable` on `<html>`
+- `frontend/app/globals.css` — `--color-brand-800/700`, `--font-serif` in `@theme`
 - `frontend/components/properties/PropertyGrid.tsx` — `id="featured-properties"`
-- `frontend/components/chat/ChatPanel.tsx` — `id="chat"`, `tabIndex={-1}`
+- `frontend/components/chat/ChatPanel.tsx` — `id="chat"`, `tabIndex={-1}`, focus ring
 - `frontend/components/layout/Footer.tsx` — `id="contact"`
-- `frontend/tests/regions.test.tsx` — rewrite the Navbar block
-- `frontend/tests/scope-boundaries.test.tsx` — re-scope to exclude the header
-- `frontend/tests/navbar.test.tsx` *(new)* — menu interaction
+- `frontend/vitest.config.mts` — alias for `next/font/google`
+- `frontend/tests/mocks/next-font-google.ts` *(new)* — the stub
+- `frontend/tests/navbar.test.tsx` *(new)* — 18 tests, incl. menu interaction
+- `frontend/tests/regions.test.tsx` — Navbar block moved out; anchor-target tests
+- `frontend/tests/scope-boundaries.test.tsx` — re-scoped to exclude the header
 
 ### Open Questions / Blockers
 <!-- Anything unresolved. Delete once resolved, don't let these pile up stale. -->
@@ -101,18 +120,18 @@ display tokens the hero and footer will reuse.
 
 ### Next Steps
 <!-- Ordered, small, actionable. This is what Claude Code should tackle first. -->
-1. Add brand-green scale + `--font-serif` to `@theme`; wire the serif face
-   through `next/font/google` in `app/layout.tsx`.
-2. Add `id`/`scroll-mt` (and `tabIndex={-1}` on the chat section) to the three
-   anchor targets.
-3. Build `Navbar`: brand link, desktop links, CTA pill, inline SVGs — drop
-   `Placeholder`.
-4. Add the mobile menu button and panel with `aria-expanded`/`aria-controls`,
-   Escape, outside-click, and link-click closing.
-5. Rewrite the Navbar tests, re-scope `scope-boundaries.test.tsx`, add the
-   interaction tests.
-6. `pnpm build` && `pnpm test` from `frontend/`, then check 375px and 1440px in a
-   browser — jsdom proves nothing visual.
+All build steps done. `pnpm build`, `pnpm lint`, and `pnpm test` (40 passing) are
+green, and 1440px / 375px / menu-open were verified in headless Chrome.
+
+1. User review of the three screenshots.
+2. Commit (not yet done — needs explicit permission).
+3. `complete-feature site-header`.
+
+**Noticed, not fixed (outside this feature):** at `lg` the chat panel's
+"Message list (scrolls)" region collapses to ~0 height. `lg:flex-1 lg:min-h-0`
+has nothing to fill because the panel's height is content-driven under
+`items-start` — it needs its own min-height at `lg`. Pre-existing from the layout
+shell; belongs to the chat-panel feature.
 
 ### Explicitly Out of Scope (for now)
 <!-- Prevents Claude Code from "helpfully" expanding scope mid-task. -->
