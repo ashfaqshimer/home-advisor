@@ -1,48 +1,50 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import Home from "@/app/page";
 
 /**
- * Guards the still-unbuilt regions. Hero, property cards, chat panel, and footer
- * are meant to stay content-free until each becomes its own feature, so these
- * tests fail the moment real content, images, or links get added there.
+ * Guards the spec's Out of Scope list. The regions that are still placeholders
+ * — hero, property grid, chat panel — must stay content-free until each becomes
+ * its own feature, so these fail the moment real content, images, or links get
+ * added to them by accident.
  *
- * SCOPE: the header is excluded — it is real content as of the site-header
- * feature, and its links and wordmark are covered by `navbar.test.tsx`. As each
- * remaining region ships, drop it from this guard rather than loosening the
- * assertion.
+ * Built regions are excluded and covered by their own files: the footer by
+ * `footer.test.tsx`, the header by `navbar.test.tsx`. As each remaining region
+ * ships, add it to BUILT_REGIONS — do not weaken the assertions, or they stop
+ * guarding anything.
  */
-/**
- * The page's top-level children are header/section/main/footer, so dropping the
- * header leaves exactly the regions still under guard. Searching each one's
- * subtree is enough — a region element is never itself an img/a/heading.
- */
-function queryAllOutsideHeader(selector: string): Element[] {
-  const { container } = render(<Home />);
-  const header = screen.getByRole("banner");
+const BUILT_REGIONS = ["footer", "header"];
 
-  return Array.from(container.children)
-    .filter((region) => region !== header)
-    .flatMap((region) => Array.from(region.querySelectorAll(selector)));
+/** The rendered page with every built region removed. */
+function unbuiltShell(): HTMLElement {
+  const { container } = render(<Home />);
+  const shell = container.cloneNode(true) as HTMLElement;
+
+  for (const selector of BUILT_REGIONS) {
+    shell.querySelectorAll(selector).forEach((el) => el.remove());
+  }
+  return shell;
 }
 
 describe("unbuilt regions stay content-free", () => {
   it("renders no images", () => {
-    expect(queryAllOutsideHeader("img")).toHaveLength(0);
+    expect(unbuiltShell().querySelectorAll("img")).toHaveLength(0);
   });
 
   it("renders no links", () => {
-    expect(queryAllOutsideHeader("a")).toHaveLength(0);
+    expect(unbuiltShell().querySelectorAll("a")).toHaveLength(0);
   });
 
   it("renders no headings, since all copy is deferred", () => {
-    expect(queryAllOutsideHeader("h1, h2, h3, h4, h5, h6")).toHaveLength(0);
+    expect(
+      unbuiltShell().querySelectorAll("h1, h2, h3, h4, h5, h6"),
+    ).toHaveLength(0);
   });
 });
 
-describe("shell carries no create-next-app boilerplate", () => {
-  it("has none of the default template copy", () => {
+describe("whole page", () => {
+  it("carries no create-next-app boilerplate text", () => {
     const { container } = render(<Home />);
     const text = container.textContent ?? "";
 

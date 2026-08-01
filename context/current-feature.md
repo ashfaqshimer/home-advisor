@@ -84,24 +84,47 @@
 -->
 
 ### Site Header — 2026-08-02
-- **What:** First real region of the shell. Brand mark + serif wordmark, centred
-  nav links as in-page anchors, dark pill chat CTA, and a working mobile menu
-  below `md`. Landed the shared brand-green and `--font-serif` tokens.
+- **What:** Brand link (shared `Logo`), centred nav links as in-page anchors, a
+  dark pill chat CTA, and a working mobile menu below `md`. Anchor targets
+  (`#featured-properties`, `#contact`, `#chat`) live on the regions themselves.
 - **Key files:** `frontend/components/layout/` (`Navbar`, `MobileMenu`,
-  `ChatCta`, `nav-links.ts`), `frontend/app/globals.css`,
-  `frontend/tests/mocks/next-font-google.ts`
-- **Gotchas/lessons:** `next/font/google` is a build-time SWC rewrite, not a
-  runtime module — importing it under Vitest throws "Lora is not a function", so
-  it needs the alias stub in `vitest.config.mts`.
-  `@next/next/no-html-link-for-pages` forces `next/link` for `href="/"`; using
-  `Link` for the hash anchors too avoids branching per call site. The mobile
-  panel unmounts when closed rather than hiding — CSS-hidden links stay tabbable
-  and make every `getByRole` ambiguous. A `#chat` jump needs `tabIndex={-1}` on
-  the target or focus never follows the viewport. Nesting a second `<nav>` inside
-  the panel would double-announce the links, so it's a plain `<ul>`.
+  `ChatCta`, `nav-links.ts`), `frontend/tests/navbar.test.tsx`
+- **Gotchas/lessons:** `@next/next/no-html-link-for-pages` forces `next/link` for
+  `href="/"`; using `Link` for the hash anchors too avoids branching per call
+  site. The mobile panel unmounts when closed rather than hiding — CSS-hidden
+  links stay tabbable and make every `getByRole` ambiguous. A `#chat` jump needs
+  `tabIndex={-1}` on the target or focus never follows the viewport. Nesting a
+  second `<nav>` inside the panel would double-announce the links, so it's a
+  plain `<ul>`.
+- **Merge note:** built in parallel with Footer, off a `main` that predated it.
+  The header originally carried its own "Terra & Co." serif wordmark from the
+  mockup; on merge it adopted the shared `Logo` per Footer's decision that the
+  brand is "Home Advisor". The `next/font` Lora wiring went with it — see
+  `b259ec3` if a serif display face is ever wanted (it needs a Vitest alias stub,
+  since `next/font/google` is a build-time SWC rewrite and throws "Lora is not a
+  function" under Vitest). `--color-brand-hover` was added alongside Footer's
+  `--color-brand` for filled-surface hover.
 - **Left for the chat-panel feature:** at `lg` the panel's "Message list" region
   collapses to ~0 height — `lg:flex-1 lg:min-h-0` has nothing to fill under
   `items-start`. Pre-existing from the layout shell.
+
+### Footer — 2026-08-02
+- **What:** First shell region to get real content. Replaced the footer's four
+  placeholders with a brand column (logo + blurb), Contact and Follow link lists,
+  and a copyright bar, per the mockup. Brand is **Home Advisor** — the mockup's
+  "Terra & Co." is placeholder art and is not used anywhere.
+- **Key files:** `frontend/components/layout/Footer.tsx`,
+  `frontend/components/layout/Logo.tsx` (new, shared — the navbar adopts it in its
+  own feature), `frontend/app/globals.css` (`--color-brand`),
+  `frontend/tests/footer.test.tsx`
+- **Gotchas/lessons:** `scope-boundaries.test.tsx` asserted the *whole* shell was
+  free of links and headings — building any region breaks it. It now strips a
+  `BUILT_REGIONS` list from the DOM before asserting; **add each region to that
+  array as it ships** rather than weakening the assertions. `regions.test.tsx` had
+  a Footer block asserting placeholder labels that had to go the same way — expect
+  one stale test per region from here on. `--color-brand` (`#1f3d30`) was eyeballed
+  off the mockup, not taken from a real brand spec. Social links are `href="#"`
+  with TODOs; no accounts exist yet.
 
 ### Basic Frontend Layout — 2026-08-01
 - **What:** Stripped create-next-app boilerplate and built the homepage as an empty

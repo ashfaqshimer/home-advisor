@@ -30,6 +30,11 @@ function menuButton(): HTMLElement {
   return screen.getByRole("button", { name: /menu/i });
 }
 
+/** The brand link. `/Home Advisor/` will not match the "Home" nav link. */
+function brandLink(): HTMLElement {
+  return screen.getByRole("link", { name: /Home Advisor/ });
+}
+
 function openPanel(): HTMLElement {
   fireEvent.click(menuButton());
   const id = menuButton().getAttribute("aria-controls");
@@ -42,22 +47,15 @@ describe("Navbar brand", () => {
   it("links home under the brand name", () => {
     render(<Navbar />);
 
-    const brand = screen.getByRole("link", { name: /Terra & Co\./ });
-    expect(brand).toHaveAttribute("href", "/");
+    expect(brandLink()).toHaveAttribute("href", "/");
   });
 
-  it("renders the wordmark in the serif display face", () => {
+  it("reads as the brand name alone, without the mark's initial", () => {
     render(<Navbar />);
 
-    // Class guard: proves the token is still applied, not that Lora loaded.
-    expect(screen.getByText("Terra & Co.")).toHaveClass("font-serif");
-  });
-
-  it("hides the letter mark from assistive tech, since the wordmark names it", () => {
-    render(<Navbar />);
-
-    const brand = screen.getByRole("link", { name: /Terra & Co\./ });
-    expect(within(brand).getByText("T")).toHaveAttribute("aria-hidden", "true");
+    // Guards Logo's `aria-hidden` on the mark from here too: losing it makes the
+    // link announce "H Home Advisor".
+    expect(brandLink()).toHaveAccessibleName("Home Advisor");
   });
 });
 
@@ -136,9 +134,7 @@ describe("Navbar responsive slots", () => {
   it("keeps the brand visible at every width", () => {
     render(<Navbar />);
 
-    expect(screen.getByRole("link", { name: /Terra & Co\./ })).not.toHaveClass(
-      "hidden",
-    );
+    expect(brandLink()).not.toHaveClass("hidden");
   });
 
   it("aligns its contents to the shared page container", () => {

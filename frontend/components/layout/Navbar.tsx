@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import ChatCta from "@/components/layout/ChatCta";
 import Container from "@/components/layout/Container";
+import Logo from "@/components/layout/Logo";
 import MobileMenu from "@/components/layout/MobileMenu";
 import { NAV_LINKS } from "@/components/layout/nav-links";
 
@@ -18,20 +19,13 @@ export default function Navbar() {
     <header className="relative border-b border-neutral-200 bg-neutral-100/50">
       <Container>
         <nav aria-label="Main" className="flex h-16 items-center gap-4">
+          {/* Shared with the footer — Logo owns the mark, wordmark, and their
+              accessible naming; the header only makes it a link. */}
           <Link
             href="/"
-            className="flex shrink-0 items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-800"
+            className="shrink-0 rounded-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
           >
-            {/* Decorative: the wordmark beside it already names the brand. */}
-            <span
-              aria-hidden="true"
-              className="flex size-7 items-center justify-center rounded-lg bg-brand-800 font-serif text-sm font-semibold text-white"
-            >
-              T
-            </span>
-            <span className="font-serif text-lg tracking-tight text-neutral-900">
-              Terra &amp; Co.
-            </span>
+            <Logo />
           </Link>
 
           {/*
@@ -46,7 +40,7 @@ export default function Navbar() {
                   href={href}
                   // Single page for now, so Home is always the current one.
                   aria-current={href === "/" ? "page" : undefined}
-                  className="rounded text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-800 aria-[current]:text-neutral-900"
+                  className="rounded-sm text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none aria-[current]:text-neutral-900"
                 >
                   {label}
                 </Link>

@@ -11,16 +11,11 @@
   /* Shared content width. The navbar, hero, main, and footer all align to it. */
   --container-page: 1200px;
 
-  /* Brand green — the CTA pill, the logo mark, and (later) the hero accents.
-     `700` is the hover/active step, not a separate hue. Nothing outside this
-     file should hard-code these values. */
-  --color-brand-800: #1f3a2e;
-  --color-brand-700: #2b5241;
-
-  /* Display face for the wordmark and headings. `--font-lora` is injected by
-     next/font in app/layout.tsx; the stack after it covers the swap window and
-     any environment where next/font isn't running (e.g. jsdom in tests). */
-  --font-serif: var(--font-lora), ui-serif, Georgia, serif;
+  /* Brand green from the mockup — the logo mark, CTAs, and focus rings all
+     pull from this one value. Yields `bg-brand`, `text-brand`, `ring-brand`. */
+  --color-brand: #1f3d30;
+  /* Hover/active step for filled brand surfaces, not a second hue. */
+  --color-brand-hover: #2b5241;
 
   /* Sticky chat panel. The height cap derives from the inset: a sticky box
      taller than the viewport can never scroll to reveal its own bottom. */

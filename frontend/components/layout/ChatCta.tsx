@@ -21,7 +21,7 @@ export default function ChatCta({
     <Link
       href={CHAT_HREF}
       onClick={onClick}
-      className={`items-center justify-center gap-2 rounded-full bg-brand-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-800 ${className}`}
+      className={`items-center justify-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-hover focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none ${className}`}
     >
       <ChatBubbleIcon />
       Chat with our AI Agent

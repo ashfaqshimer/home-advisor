@@ -117,26 +117,28 @@ describe("ChatPanel", () => {
 // Navbar's own tests live in `navbar.test.tsx` — content, links, and the mobile
 // menu. Only its place in the shell is asserted here.
 
+// The footer is no longer a placeholder region — its content, links, and
+// headings are covered by `footer.test.tsx`. Only its grid shape is asserted
+// here, alongside the other regions' layout guards.
 describe("Footer", () => {
-  it("has three content columns plus a bottom bar", () => {
-    render(<Footer />);
-
-    const footer = screen.getByRole("contentinfo");
-    for (const label of ["Brand / blurb", "Contact", "Follow", "Bottom bar"]) {
-      expect(within(footer).getByText(label)).toBeInTheDocument();
-    }
-  });
-
   it("is the target of the header's Contact link", () => {
     render(<Footer />);
+    const footer = screen.getByRole("contentinfo");
 
-    expect(screen.getByRole("contentinfo")).toHaveAttribute("id", "contact");
-    expect(screen.getByRole("contentinfo")).toHaveClass("scroll-mt-24");
+    expect(footer).toHaveAttribute("id", "contact");
+    // Class guard: without it an anchor jump parks the footer flush against the
+    // top edge. jsdom cannot verify the resulting offset.
+    expect(footer).toHaveClass("scroll-mt-24");
   });
 
   it("gives the brand column double width so the row reads as three columns", () => {
     render(<Footer />);
 
-    expect(region("Brand / blurb")).toHaveClass("lg:col-span-2");
+    // Class-presence guard, not a layout assertion — jsdom computes no columns.
+    const brand = within(screen.getByRole("contentinfo"))
+      .getByText("Home Advisor")
+      .closest("div");
+
+    expect(brand).toHaveClass("lg:col-span-2");
   });
 });

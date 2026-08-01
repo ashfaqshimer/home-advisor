@@ -16,7 +16,7 @@ export default function ChatPanel() {
         <section> is not a focus target otherwise.
       */
       tabIndex={-1}
-      className="flex scroll-mt-24 flex-col gap-4 rounded-xl border border-neutral-200 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-800 lg:sticky lg:top-panel-inset lg:max-h-panel-max"
+      className="flex scroll-mt-24 flex-col gap-4 rounded-xl border border-neutral-200 p-4 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none lg:sticky lg:top-panel-inset lg:max-h-panel-max"
     >
       <Placeholder label="Agent header" className="h-14 shrink-0" />
       <Placeholder

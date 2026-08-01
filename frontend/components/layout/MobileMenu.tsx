@@ -60,7 +60,7 @@ export default function MobileMenu({ className = "" }: { className?: string }) {
         aria-controls={PANEL_ID}
         aria-label={open ? "Close menu" : "Open menu"}
         onClick={() => setOpen((wasOpen) => !wasOpen)}
-        className="flex size-9 items-center justify-center rounded-lg border border-neutral-300 text-neutral-700 transition-colors hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-800"
+        className="flex size-9 items-center justify-center rounded-lg border border-neutral-300 text-neutral-700 transition-colors hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
       >
         {open ? <CloseIcon /> : <MenuIcon />}
       </button>
@@ -83,7 +83,7 @@ export default function MobileMenu({ className = "" }: { className?: string }) {
                 <Link
                   href={href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-800"
+                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
                 >
                   {label}
                 </Link>
