@@ -8,8 +8,15 @@ import Placeholder from "@/components/Placeholder";
 export default function ChatPanel() {
   return (
     <section
+      id="chat"
       aria-label="AI agent chat"
-      className="flex flex-col gap-4 rounded-xl border border-neutral-200 p-4 lg:sticky lg:top-panel-inset lg:max-h-panel-max"
+      /*
+        `tabIndex={-1}` is what makes the header's "Chat with our AI Agent"
+        link move keyboard focus here, not just the viewport — a plain
+        <section> is not a focus target otherwise.
+      */
+      tabIndex={-1}
+      className="flex scroll-mt-24 flex-col gap-4 rounded-xl border border-neutral-200 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-800 lg:sticky lg:top-panel-inset lg:max-h-panel-max"
     >
       <Placeholder label="Agent header" className="h-14 shrink-0" />
       <Placeholder

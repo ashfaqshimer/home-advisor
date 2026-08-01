@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 
 import ChatPanel from "@/components/chat/ChatPanel";
 import Footer from "@/components/layout/Footer";
-import Navbar from "@/components/layout/Navbar";
 import PropertyCard from "@/components/properties/PropertyCard";
 import PropertyGrid, {
   PLACEHOLDER_CARD_COUNT,
@@ -27,6 +26,15 @@ describe("PropertyGrid", () => {
     // when the count changes — including to an odd number.
     expect(container.querySelectorAll("article")).toHaveLength(
       PLACEHOLDER_CARD_COUNT,
+    );
+  });
+
+  it("is the target of the header's Listings link", () => {
+    render(<PropertyGrid />);
+
+    expect(screen.getByRole("region", { name: "Featured properties" })).toHaveAttribute(
+      "id",
+      "featured-properties",
     );
   });
 
@@ -71,6 +79,15 @@ describe("ChatPanel", () => {
     }
   });
 
+  it("is a focusable target for the header CTA", () => {
+    render(<ChatPanel />);
+    const panel = screen.getByRole("region", { name: "AI agent chat" });
+
+    expect(panel).toHaveAttribute("id", "chat");
+    // Without tabIndex a #chat jump moves the viewport but not keyboard focus.
+    expect(panel).toHaveAttribute("tabindex", "-1");
+  });
+
   it("has no interactive chat controls yet", () => {
     const { container } = render(<ChatPanel />);
 
@@ -95,21 +112,8 @@ describe("ChatPanel", () => {
   });
 });
 
-describe("Navbar", () => {
-  it("swaps the menu slot for inline links at the md breakpoint", () => {
-    render(<Navbar />);
-
-    expect(region("Menu")).toHaveClass("md:hidden");
-    expect(region("Nav links")).toHaveClass("hidden", "md:block");
-    expect(region("Header CTA")).toHaveClass("hidden", "md:block");
-  });
-
-  it("shows the logo at every width", () => {
-    render(<Navbar />);
-
-    expect(region("Logo")).not.toHaveClass("hidden");
-  });
-});
+// Navbar's own tests live in `navbar.test.tsx` — content, links, and the mobile
+// menu. Only its place in the shell is asserted here.
 
 describe("Footer", () => {
   it("has three content columns plus a bottom bar", () => {
@@ -119,6 +123,12 @@ describe("Footer", () => {
     for (const label of ["Brand / blurb", "Contact", "Follow", "Bottom bar"]) {
       expect(within(footer).getByText(label)).toBeInTheDocument();
     }
+  });
+
+  it("is the target of the header's Contact link", () => {
+    render(<Footer />);
+
+    expect(screen.getByRole("contentinfo")).toHaveAttribute("id", "contact");
   });
 
   it("gives the brand column double width so the row reads as three columns", () => {

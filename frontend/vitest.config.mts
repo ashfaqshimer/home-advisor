@@ -6,8 +6,13 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    // Mirrors the `@/*` alias in tsconfig.json.
-    alias: { "@": import.meta.dirname },
+    alias: {
+      // Mirrors the `@/*` alias in tsconfig.json.
+      "@": import.meta.dirname,
+      // next/font is a build-time SWC transform, not a runtime module — see the
+      // header comment in the stub for why importing it here throws.
+      "next/font/google": `${import.meta.dirname}/tests/mocks/next-font-google.ts`,
+    },
   },
   test: {
     environment: "jsdom",

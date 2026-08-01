@@ -3,7 +3,10 @@ import Container from "@/components/layout/Container";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-neutral-200 bg-neutral-100/50">
+    <footer
+      id="contact"
+      className="scroll-mt-24 border-t border-neutral-200 bg-neutral-100/50"
+    >
       <Container className="py-12 sm:py-14">
         {/* Brand takes half the row; contact and follow split the rest. */}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">

@@ -9,7 +9,11 @@ export const PLACEHOLDER_CARD_COUNT = 8;
 
 export default function PropertyGrid() {
   return (
-    <section aria-label="Featured properties" className="flex flex-col gap-8">
+    <section
+      id="featured-properties"
+      aria-label="Featured properties"
+      className="flex scroll-mt-24 flex-col gap-8"
+    >
       <div className="flex flex-col gap-3">
         <Placeholder label="Eyebrow" className="h-6 w-40 max-w-full" />
         <Placeholder label="Section heading" className="h-10 w-72 max-w-full" />
