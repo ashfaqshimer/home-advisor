@@ -11,6 +11,10 @@
   /* Shared content width. The navbar, hero, main, and footer all align to it. */
   --container-page: 1200px;
 
+  /* Brand green from the mockup — the logo mark, CTAs, and focus rings all
+     pull from this one value. Yields `bg-brand`, `text-brand`, `ring-brand`. */
+  --color-brand: #1f3d30;
+
   /* Sticky chat panel. The height cap derives from the inset: a sticky box
      taller than the viewport can never scroll to reveal its own bottom. */
   --spacing-panel-inset: 1.5rem;
