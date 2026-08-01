@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import Home from "@/app/page";
-import { metadata } from "@/app/layout";
+import RootLayout, { metadata } from "@/app/layout";
 
 /**
  * Structural tests for the layout shell.
@@ -50,6 +50,23 @@ describe("homepage structure", () => {
     // Node.DOCUMENT_POSITION_FOLLOWING — chat comes after grid, which is what
     // makes the single-column mobile stack order correct.
     expect(grid.compareDocumentPosition(chat) & 4).toBeTruthy();
+  });
+});
+
+describe("root layout", () => {
+  it("puts the serif font's CSS variable on <html> so font-serif resolves", async () => {
+    // Rendered to a string rather than into jsdom: RootLayout returns <html>
+    // and <body>, which cannot be mounted inside an existing document.
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    const html = renderToStaticMarkup(
+      <RootLayout>
+        <p>content</p>
+      </RootLayout>,
+    );
+
+    // The class name itself comes from the next/font stub — asserted only as
+    // "something was applied", since the real value is build-generated.
+    expect(html).toMatch(/<html[^>]*class="[^"]*mock-font-variable-Lora/);
   });
 });
 

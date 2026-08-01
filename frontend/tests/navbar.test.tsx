@@ -110,6 +110,13 @@ describe("Navbar CTA", () => {
       screen.queryByRole("button", { name: "Chat with our AI Agent" }),
     ).not.toBeInTheDocument();
   });
+
+  it("hides its icon from assistive tech so the label reads cleanly", () => {
+    render(<Navbar />);
+
+    const cta = screen.getByRole("link", { name: "Chat with our AI Agent" });
+    expect(cta.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+  });
 });
 
 describe("Navbar responsive slots", () => {
@@ -132,6 +139,15 @@ describe("Navbar responsive slots", () => {
     expect(screen.getByRole("link", { name: /Terra & Co\./ })).not.toHaveClass(
       "hidden",
     );
+  });
+
+  it("aligns its contents to the shared page container", () => {
+    render(<Navbar />);
+
+    // Class guard: the header must share one horizontal edge with the hero,
+    // main, and footer, all of which render inside Container.
+    const nav = screen.getByRole("navigation", { name: "Main" });
+    expect(nav.parentElement).toHaveClass("max-w-page");
   });
 });
 

@@ -31,11 +31,12 @@ describe("PropertyGrid", () => {
 
   it("is the target of the header's Listings link", () => {
     render(<PropertyGrid />);
+    const section = screen.getByRole("region", { name: "Featured properties" });
 
-    expect(screen.getByRole("region", { name: "Featured properties" })).toHaveAttribute(
-      "id",
-      "featured-properties",
-    );
+    expect(section).toHaveAttribute("id", "featured-properties");
+    // Class guard: without it an anchor jump parks the section flush against
+    // the top edge. jsdom cannot verify the resulting offset.
+    expect(section).toHaveClass("scroll-mt-24");
   });
 
   it("renders the section header regions above the cards", () => {
@@ -86,6 +87,7 @@ describe("ChatPanel", () => {
     expect(panel).toHaveAttribute("id", "chat");
     // Without tabIndex a #chat jump moves the viewport but not keyboard focus.
     expect(panel).toHaveAttribute("tabindex", "-1");
+    expect(panel).toHaveClass("scroll-mt-24");
   });
 
   it("has no interactive chat controls yet", () => {
@@ -129,6 +131,7 @@ describe("Footer", () => {
     render(<Footer />);
 
     expect(screen.getByRole("contentinfo")).toHaveAttribute("id", "contact");
+    expect(screen.getByRole("contentinfo")).toHaveClass("scroll-mt-24");
   });
 
   it("gives the brand column double width so the row reads as three columns", () => {
