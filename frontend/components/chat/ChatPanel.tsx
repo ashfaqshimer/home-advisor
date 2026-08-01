@@ -4,12 +4,17 @@ import Placeholder from "@/components/Placeholder";
  * Sticky from `lg` up, capped to `--spacing-panel-max` so the panel always
  * fits the viewport — the message region is the part that scrolls. Below `lg`
  * it sits in normal flow after the grid, where no cap is needed.
+ *
+ * `id="chat"` is the hero CTA's jump target. The scroll margin matches the
+ * sticky inset so the panel lands where it will settle, not flush to the
+ * viewport edge and then nudged down a beat later.
  */
 export default function ChatPanel() {
   return (
     <section
+      id="chat"
       aria-label="AI agent chat"
-      className="flex flex-col gap-4 rounded-xl border border-neutral-200 p-4 lg:sticky lg:top-panel-inset lg:max-h-panel-max"
+      className="flex scroll-mt-panel-inset flex-col gap-4 rounded-xl border border-neutral-200 p-4 lg:sticky lg:top-panel-inset lg:max-h-panel-max"
     >
       <Placeholder label="Agent header" className="h-14 shrink-0" />
       <Placeholder

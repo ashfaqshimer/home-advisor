@@ -4,24 +4,32 @@ import { describe, expect, it } from "vitest";
 import Home from "@/app/page";
 
 /**
- * Guards the spec's Out of Scope list. This shell is meant to stay content-free
- * until each region becomes its own feature, so these tests fail the moment
- * real content, images, or nav links get added here by accident.
+ * Guards the current feature's Out of Scope list. The hero is real now; every
+ * other region — navbar, property grid, chat panel, footer — is still meant to
+ * be a placeholder, so these tests fail the moment content leaks into one.
+ *
+ * Each shipped region relaxes a bound here. Tighten the expected counts as
+ * regions land rather than deleting the assertion.
  */
-describe("shell stays content-free", () => {
+describe("shell stays content-free outside the hero", () => {
   it("renders no images", () => {
     const { container } = render(<Home />);
     expect(container.querySelectorAll("img")).toHaveLength(0);
   });
 
-  it("renders no links, including in the nav", () => {
+  it("renders exactly one link — the hero CTA — and none in the nav", () => {
     const { container } = render(<Home />);
-    expect(container.querySelectorAll("a")).toHaveLength(0);
+
+    const links = Array.from(container.querySelectorAll("a"));
+    expect(links.map((a) => a.getAttribute("href"))).toEqual(["#chat"]);
+    expect(container.querySelectorAll("nav a")).toHaveLength(0);
   });
 
-  it("renders no headings, since all copy is deferred", () => {
+  it("renders the hero h1 and no other heading, since the rest is deferred", () => {
     const { container } = render(<Home />);
-    expect(container.querySelectorAll("h1, h2, h3, h4, h5, h6")).toHaveLength(0);
+
+    expect(container.querySelectorAll("h1")).toHaveLength(1);
+    expect(container.querySelectorAll("h2, h3, h4, h5, h6")).toHaveLength(0);
   });
 
   it("carries no create-next-app boilerplate text", () => {

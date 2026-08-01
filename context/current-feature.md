@@ -74,7 +74,8 @@ understand what the site does and have one obvious action to take.
 <!-- Running list so Claude Code doesn't have to grep the whole repo to find scope -->
 - `frontend/app/globals.css` — brand colour + `--font-display` tokens, smooth scroll
 - `frontend/components/layout/Hero.tsx` — the feature
-- `frontend/components/chat/ChatPanel.tsx` — `id="chat"` anchor target only
+- `frontend/components/ui/ChatCta.tsx` — new; the navbar needs this same control
+- `frontend/components/chat/ChatPanel.tsx` — `id="chat"` + `scroll-mt` only
 - `frontend/tests/hero.test.tsx` — new
 - `frontend/tests/scope-boundaries.test.tsx` — hero is no longer content-free
 

@@ -1,18 +1,38 @@
-import Placeholder from "@/components/Placeholder";
 import Container from "@/components/layout/Container";
+import ChatCta from "@/components/ui/ChatCta";
 
 export default function Hero() {
   return (
     <section
-      aria-label="Introduction"
-      className="border-b border-neutral-200 bg-neutral-100/50"
+      aria-labelledby="hero-heading"
+      className="border-b border-neutral-200 bg-band"
     >
       <Container className="py-16 sm:py-24">
-        <div className="mx-auto flex max-w-2xl flex-col items-center gap-5">
-          <Placeholder label="Eyebrow badge" className="h-7 w-64 max-w-full" />
-          <Placeholder label="Headline" className="h-24 w-full sm:h-32" />
-          <Placeholder label="Subcopy" className="h-12 w-full max-w-md" />
-          <Placeholder label="Hero CTA" className="h-11 w-52 max-w-full" />
+        <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
+          <p className="rounded-full bg-band-strong px-3.5 py-1.5 text-xs text-muted">
+            Colombo-based · island-wide reach
+          </p>
+
+          {/*
+            `text-balance` gives the two near-even lines the mockup shows
+            without a hardcoded <br>, which would break at every other width.
+            The serif comes from --font-display — still a system stack; see the
+            note on that token in globals.css.
+          */}
+          <h1
+            id="hero-heading"
+            className="mt-6 font-display text-3xl leading-tight text-balance text-ink sm:text-5xl lg:text-6xl"
+          >
+            Find your next home in Colombo — and beyond
+          </h1>
+
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
+            AI-guided property search across Sri Lanka&apos;s top locations.
+            Tell us what you&apos;re looking for, and we&apos;ll find the right
+            address.
+          </p>
+
+          <ChatCta className="mt-9" />
         </div>
       </Container>
     </section>
