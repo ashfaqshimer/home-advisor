@@ -37,41 +37,71 @@
   just append a correction under it.
 -->
 
-**Feature:** <!-- e.g. "Property search filters (price range, bedrooms, location)" -->
+**Feature:** Footer
 
-**Spec:** <!-- context/features/<slug>/spec.md -->
+**Spec:** `context/features/footer/spec.md`
 
 **Goal:**
-<!-- One or two sentences. What does "done" look like from the user's POV? -->
+Replace the four `Placeholder` stubs in `frontend/components/layout/Footer.tsx`
+with the real footer from `context/ui-interface.png` — brand column with blurb,
+contact column, follow column, and a bottom copyright bar. First region of the
+layout shell to get real content.
 
-**Status:** `Not started | In progress | Blocked | In review/testing | Done`
+**Status:** `In progress`
 
-**Branch:** <!-- e.g. feature/property-search-filters -->
+**Branch:** `feature/footer`
 
 ### Approach / Key Decisions
 <!--
   Why you're building it this way — especially anything non-obvious.
   This is the highest-value section: code shows WHAT, this shows WHY.
 -->
--
+- **Brand is "Home Advisor", not the mockup's "Terra & Co."** The mockup is
+  placeholder art; the real name propagates to the wordmark, the email
+  (`hello@homeadvisor.lk`), and the copyright line.
+- **Logo is extracted to `components/layout/Logo.tsx` now, not inlined.** The
+  mark appears in both navbar and footer; extracting on first use avoids the
+  navbar feature having to un-duplicate it later. Navbar itself is untouched
+  here — it adopts `Logo` in its own feature.
+- **`Placeholder.tsx` stays.** Four other regions still use it. It only gets
+  deleted when the last one is built.
+- **`scope-boundaries.test.tsx` gets narrowed, not gutted.** It currently
+  asserts the whole shell is free of links and headings, which stops being true
+  the moment the footer is real. Scope it to the regions that are still
+  placeholders so it keeps guarding them.
+- Working in a git worktree at `.claude/worktrees/footer` rather than switching
+  the main checkout's branch.
 
 ### Files Touched
 <!-- Running list so Claude Code doesn't have to grep the whole repo to find scope -->
--
+- `frontend/components/layout/Logo.tsx` (new)
+- `frontend/components/layout/Footer.tsx`
+- `frontend/tests/footer.test.tsx` (new)
+- `frontend/tests/scope-boundaries.test.tsx`
 
 ### Open Questions / Blockers
 <!-- Anything unresolved. Delete once resolved, don't let these pile up stale. -->
--
+- Social links point at `href="#"` — no real accounts exist yet. Each carries a
+  TODO; revisit when the accounts are created.
 
 ### Next Steps
 <!-- Ordered, small, actionable. This is what Claude Code should tackle first. -->
-1.
-2.
-3.
+1. Build `Logo.tsx` — inline SVG/CSS mark plus "Home Advisor" wordmark as real text.
+2. Rewrite `Footer.tsx`: brand + blurb, Contact `<h2>` + list, Follow `<h2>` + list,
+   bottom bar with top border. Keep the existing band styling and grid shape.
+3. Wire links — `tel:`, `mailto:`, `#` for social; hover and focus-visible states.
+4. Write `footer.test.tsx`; narrow `scope-boundaries.test.tsx`.
+5. `pnpm build` && `pnpm test` from `frontend/`.
 
 ### Explicitly Out of Scope (for now)
 <!-- Prevents Claude Code from "helpfully" expanding scope mid-task. -->
--
+- Navbar, hero, property grid, chat panel — still placeholders.
+- Deleting `Placeholder.tsx`.
+- `next/font` setup and the mockup's serif display face.
+- Real destinations for social links; social icons (text labels only).
+- Newsletter signup, sitemap, legal/privacy pages.
+- Dark mode.
+- Making contact details configurable via env vars or a CMS.
 
 ---
 
