@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/*
+  Layout standards.
+
+  Anything used by more than one component, or any value another value depends
+  on, belongs here — not as an inline arbitrary utility. Tailwind v4 turns each
+  token into a normal utility class (`--container-page` -> `max-w-page`).
+*/
+@theme {
+  /* Shared content width. The navbar, hero, main, and footer all align to it. */
+  --container-page: 1200px;
+
+  /* Sticky chat panel. The height cap derives from the inset: a sticky box
+     taller than the viewport can never scroll to reveal its own bottom. */
+  --spacing-panel-inset: 1.5rem;
+  --spacing-panel-max: calc(100vh - (2 * var(--spacing-panel-inset)));
+}
