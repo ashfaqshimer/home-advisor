@@ -19,6 +19,3 @@ export const NAV_LINKS: readonly NavLink[] = [
   { href: "#featured-properties", label: "Listings" },
   { href: "#contact", label: "Contact" },
 ];
-
-/** Anchor for the chat panel, used by the CTA in both the row and the panel. */
-export const CHAT_HREF = "#chat";

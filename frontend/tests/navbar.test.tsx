@@ -124,10 +124,11 @@ describe("Navbar responsive slots", () => {
     // Class guards. jsdom cannot evaluate breakpoints; losing any of these
     // silently doubles up or hides the whole right-hand side of the header.
     expect(desktopRow()).toHaveClass("hidden", "md:flex");
-    expect(screen.getByRole("link", { name: "Chat with our AI Agent" })).toHaveClass(
-      "hidden",
-      "md:inline-flex",
-    );
+    // The guard is on the CTA's wrapper, not the CTA: a `hidden` class on the
+    // CTA itself loses to its own base `inline-flex` by stylesheet order.
+    expect(
+      screen.getByRole("link", { name: "Chat with our AI Agent" }).parentElement,
+    ).toHaveClass("hidden", "md:block");
     expect(menuButton().parentElement).toHaveClass("md:hidden");
   });
 

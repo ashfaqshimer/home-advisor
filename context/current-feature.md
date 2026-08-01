@@ -96,17 +96,46 @@
   `tabIndex={-1}` on the target or focus never follows the viewport. Nesting a
   second `<nav>` inside the panel would double-announce the links, so it's a
   plain `<ul>`.
-- **Merge note:** built in parallel with Footer, off a `main` that predated it.
-  The header originally carried its own "Terra & Co." serif wordmark from the
-  mockup; on merge it adopted the shared `Logo` per Footer's decision that the
-  brand is "Home Advisor". The `next/font` Lora wiring went with it — see
-  `b259ec3` if a serif display face is ever wanted (it needs a Vitest alias stub,
-  since `next/font/google` is a build-time SWC rewrite and throws "Lora is not a
-  function" under Vitest). `--color-brand-hover` was added alongside Footer's
-  `--color-brand` for filled-surface hover.
+- **Merge note — three features shipped in parallel off the same `main`, and this
+  one merged last.** It duplicated two components that Footer and Hero had each
+  built "for the navbar to adopt later", and lost both duplicates on merge:
+  its own "Terra & Co." serif wordmark → Footer's shared `Logo` ("Home Advisor");
+  its own `components/layout/ChatCta` → Hero's `components/ui/ChatCta`, extended
+  here with a `size` prop and an `onClick` (the mobile panel has to close itself).
+  Size is a prop, not an overridable class, because two competing `px-*`
+  utilities resolve by stylesheet order, not argument order. Dropping the
+  wordmark also orphaned the `next/font` Lora wiring, so that came out rather
+  than ship a webfont nothing renders — see `b259ec3` if a display face is wanted
+  again; it needs a Vitest alias stub, since `next/font/google` is a build-time
+  SWC rewrite that throws "Lora is not a function" under Vitest.
+  **Lesson: check `main` for a shared component before building one.**
+- **Known inconsistency, not introduced here:** the footer styles focus rings with
+  `ring-*`, the hero and CTA with `outline-*`. The header follows the CTA. Worth one
+  pass to settle on one idiom.
 - **Left for the chat-panel feature:** at `lg` the panel's "Message list" region
   collapses to ~0 height — `lg:flex-1 lg:min-h-0` has nothing to fill under
   `items-start`. Pre-existing from the layout shell.
+
+### Hero Section — 2026-08-02
+- **What:** First real content on the page. Swapped the hero's four placeholders for
+  the eyebrow pill, serif `h1`, subcopy, and green pill CTA from
+  `context/ui-interface.png`, and introduced the brand palette as `@theme` tokens.
+- **Key files:** `frontend/components/layout/Hero.tsx`,
+  `frontend/components/ui/ChatCta.tsx` (new — the navbar needs the same control),
+  `frontend/app/globals.css` (brand colours + `--font-display`)
+- **Gotchas/lessons:** Brand colours were sampled from the mockup's pixels, not
+  eyeballed — re-sample rather than nudging by hand if the mockup changes.
+  `--font-display` is deliberately a *system* serif stack; the real pairing
+  (Playfair Display + DM Sans is the leading candidate) is deferred to a typography
+  feature, and swapping that one token is the whole migration. Verifying this needed
+  a real browser over CDP, not jsdom: colours, no-overflow at 375/1440, and
+  reduced-motion scroll are all invisible to the test suite. Two traps found that
+  way — programmatic `.focus()` does **not** trigger `:focus-visible`, so a focus
+  ring reads as absent unless you dispatch a real Tab key; and Chrome's legacy
+  `--headless` has a minimum window width, so a 375px screenshot shows fake
+  horizontal overflow. Use `--headless=new` + `Emulation.setDeviceMetricsOverride`.
+  Merged after Footer and **corrected `--color-brand` from `#1f3d30` to `#2c4a3e`** —
+  every green surface in the mockup is the latter; the footer inherits the fix.
 
 ### Footer — 2026-08-02
 - **What:** First shell region to get real content. Replaced the footer's four
@@ -123,8 +152,8 @@
   array as it ships** rather than weakening the assertions. `regions.test.tsx` had
   a Footer block asserting placeholder labels that had to go the same way — expect
   one stale test per region from here on. `--color-brand` (`#1f3d30`) was eyeballed
-  off the mockup, not taken from a real brand spec. Social links are `href="#"`
-  with TODOs; no accounts exist yet.
+  off the mockup rather than sampled — **superseded by `#2c4a3e`, see Hero Section
+  above.** Social links are `href="#"` with TODOs; no accounts exist yet.
 
 ### Basic Frontend Layout — 2026-08-01
 - **What:** Stripped create-next-app boilerplate and built the homepage as an empty

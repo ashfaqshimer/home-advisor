@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-import ChatCta from "@/components/layout/ChatCta";
 import { NAV_LINKS } from "@/components/layout/nav-links";
+import ChatCta from "@/components/ui/ChatCta";
 
 const PANEL_ID = "mobile-nav-panel";
 
@@ -60,7 +60,7 @@ export default function MobileMenu({ className = "" }: { className?: string }) {
         aria-controls={PANEL_ID}
         aria-label={open ? "Close menu" : "Open menu"}
         onClick={() => setOpen((wasOpen) => !wasOpen)}
-        className="flex size-9 items-center justify-center rounded-lg border border-neutral-300 text-neutral-700 transition-colors hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
+        className="flex size-9 items-center justify-center rounded-lg border border-neutral-300 text-neutral-700 transition-colors hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
       >
         {open ? <CloseIcon /> : <MenuIcon />}
       </button>
@@ -83,14 +83,19 @@ export default function MobileMenu({ className = "" }: { className?: string }) {
                 <Link
                   href={href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
+                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 >
                   {label}
                 </Link>
               </li>
             ))}
             <li className="mt-2">
-              <ChatCta className="flex" onClick={() => setOpen(false)} />
+              {/* `w-full`, not a display class — see the note in Navbar. */}
+              <ChatCta
+                size="sm"
+                className="w-full justify-center"
+                onClick={() => setOpen(false)}
+              />
             </li>
           </ul>
         </div>

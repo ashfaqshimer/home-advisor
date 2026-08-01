@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-import ChatCta from "@/components/layout/ChatCta";
 import Container from "@/components/layout/Container";
 import Logo from "@/components/layout/Logo";
 import MobileMenu from "@/components/layout/MobileMenu";
 import { NAV_LINKS } from "@/components/layout/nav-links";
+import ChatCta from "@/components/ui/ChatCta";
 
 /**
  * Non-sticky by deliberate choice — the mockup shows no scroll state. `relative`
@@ -23,7 +23,7 @@ export default function Navbar() {
               accessible naming; the header only makes it a link. */}
           <Link
             href="/"
-            className="shrink-0 rounded-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
+            className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
           >
             <Logo />
           </Link>
@@ -40,7 +40,7 @@ export default function Navbar() {
                   href={href}
                   // Single page for now, so Home is always the current one.
                   aria-current={href === "/" ? "page" : undefined}
-                  className="rounded-sm text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none aria-[current]:text-neutral-900"
+                  className="rounded-sm text-sm font-medium text-muted transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand aria-[current]:text-ink"
                 >
                   {label}
                 </Link>
@@ -48,7 +48,15 @@ export default function Navbar() {
             ))}
           </ul>
 
-          <ChatCta className="hidden shrink-0 md:inline-flex" />
+          {/*
+            Hidden via a wrapper, not a `hidden` class on the CTA itself:
+            ChatCta's base `inline-flex` and a passed `hidden` are both display
+            utilities, and they resolve by stylesheet order — `hidden` loses, so
+            the CTA would show at 375px and overflow the row.
+          */}
+          <span className="hidden shrink-0 md:block">
+            <ChatCta size="sm" />
+          </span>
 
           <MobileMenu className="ml-auto md:hidden" />
         </nav>

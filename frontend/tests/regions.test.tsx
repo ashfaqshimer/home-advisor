@@ -87,7 +87,8 @@ describe("ChatPanel", () => {
     expect(panel).toHaveAttribute("id", "chat");
     // Without tabIndex a #chat jump moves the viewport but not keyboard focus.
     expect(panel).toHaveAttribute("tabindex", "-1");
-    expect(panel).toHaveClass("scroll-mt-24");
+    // Scroll margin matches the sticky inset so the panel lands where it settles.
+    expect(panel).toHaveClass("scroll-mt-panel-inset");
   });
 
   it("has no interactive chat controls yet", () => {

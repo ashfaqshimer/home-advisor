@@ -5,16 +5,19 @@ import Home from "@/app/page";
 
 /**
  * Guards the spec's Out of Scope list. The regions that are still placeholders
- * — hero, property grid, chat panel — must stay content-free until each becomes
- * its own feature, so these fail the moment real content, images, or links get
+ * — property grid, chat panel — must stay content-free until each becomes its
+ * own feature, so these fail the moment real content, images, or links get
  * added to them by accident.
  *
- * Built regions are excluded and covered by their own files: the footer by
- * `footer.test.tsx`, the header by `navbar.test.tsx`. As each remaining region
- * ships, add it to BUILT_REGIONS — do not weaken the assertions, or they stop
- * guarding anything.
+ * Built regions are excluded; their own content is covered by their own test
+ * files. As each remaining region ships, add it to BUILT_REGIONS — do not
+ * weaken the assertions, or they stop guarding anything.
  */
-const BUILT_REGIONS = ["footer", "header"];
+const BUILT_REGIONS = [
+  "footer",
+  "header",
+  "section[aria-labelledby='hero-heading']",
+];
 
 /** The rendered page with every built region removed. */
 function unbuiltShell(): HTMLElement {
@@ -40,6 +43,16 @@ describe("unbuilt regions stay content-free", () => {
     expect(
       unbuiltShell().querySelectorAll("h1, h2, h3, h4, h5, h6"),
     ).toHaveLength(0);
+  });
+
+  it("strips a region for every selector in BUILT_REGIONS", () => {
+    const { container } = render(<Home />);
+
+    // Without this, a typo'd or stale selector silently strips nothing and the
+    // assertions above quietly pass by testing content that is still there.
+    for (const selector of BUILT_REGIONS) {
+      expect(container.querySelectorAll(selector).length).toBeGreaterThan(0);
+    }
   });
 });
 
