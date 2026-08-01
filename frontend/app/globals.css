@@ -18,7 +18,12 @@
 
   /* Brand palette. Every value here was sampled out of the pixels of
      context/ui-interface.png rather than eyeballed — if the mockup changes,
-     re-sample rather than nudging by hand. */
+     re-sample rather than nudging by hand.
+
+     --color-brand was #1f3d30 when the footer landed, eyeballed rather than
+     sampled. Every green surface in the mockup — nav logo, nav CTA, hero CTA,
+     chat send button, chat bubble, footer logo — is exactly #2c4a3e, so this
+     is the corrected value. The footer picks it up automatically. */
   --color-brand: #2c4a3e; /* deep green: CTAs, logo mark */
   --color-on-brand: #f5f4f1; /* the only text colour that sits on --color-brand */
   --color-ink: #1a1a1a; /* headlines; softer than pure black */

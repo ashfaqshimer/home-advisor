@@ -111,19 +111,18 @@ describe("Navbar", () => {
   });
 });
 
+// The footer is no longer a placeholder region — its content, links, and
+// headings are covered by `footer.test.tsx`. Only its grid shape is asserted
+// here, alongside the other regions' layout guards.
 describe("Footer", () => {
-  it("has three content columns plus a bottom bar", () => {
-    render(<Footer />);
-
-    const footer = screen.getByRole("contentinfo");
-    for (const label of ["Brand / blurb", "Contact", "Follow", "Bottom bar"]) {
-      expect(within(footer).getByText(label)).toBeInTheDocument();
-    }
-  });
-
   it("gives the brand column double width so the row reads as three columns", () => {
     render(<Footer />);
 
-    expect(region("Brand / blurb")).toHaveClass("lg:col-span-2");
+    // Class-presence guard, not a layout assertion — jsdom computes no columns.
+    const brand = within(screen.getByRole("contentinfo"))
+      .getByText("Home Advisor")
+      .closest("div");
+
+    expect(brand).toHaveClass("lg:col-span-2");
   });
 });

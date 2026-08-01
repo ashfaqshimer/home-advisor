@@ -101,6 +101,26 @@
   ring reads as absent unless you dispatch a real Tab key; and Chrome's legacy
   `--headless` has a minimum window width, so a 375px screenshot shows fake
   horizontal overflow. Use `--headless=new` + `Emulation.setDeviceMetricsOverride`.
+  Merged after Footer and **corrected `--color-brand` from `#1f3d30` to `#2c4a3e`** —
+  every green surface in the mockup is the latter; the footer inherits the fix.
+
+### Footer — 2026-08-02
+- **What:** First shell region to get real content. Replaced the footer's four
+  placeholders with a brand column (logo + blurb), Contact and Follow link lists,
+  and a copyright bar, per the mockup. Brand is **Home Advisor** — the mockup's
+  "Terra & Co." is placeholder art and is not used anywhere.
+- **Key files:** `frontend/components/layout/Footer.tsx`,
+  `frontend/components/layout/Logo.tsx` (new, shared — the navbar adopts it in its
+  own feature), `frontend/app/globals.css` (`--color-brand`),
+  `frontend/tests/footer.test.tsx`
+- **Gotchas/lessons:** `scope-boundaries.test.tsx` asserted the *whole* shell was
+  free of links and headings — building any region breaks it. It now strips a
+  `BUILT_REGIONS` list from the DOM before asserting; **add each region to that
+  array as it ships** rather than weakening the assertions. `regions.test.tsx` had
+  a Footer block asserting placeholder labels that had to go the same way — expect
+  one stale test per region from here on. `--color-brand` (`#1f3d30`) was eyeballed
+  off the mockup rather than sampled — **superseded by `#2c4a3e`, see Hero Section
+  above.** Social links are `href="#"` with TODOs; no accounts exist yet.
 
 ### Basic Frontend Layout — 2026-08-01
 - **What:** Stripped create-next-app boilerplate and built the homepage as an empty
