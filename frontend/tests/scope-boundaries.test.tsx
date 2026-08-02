@@ -4,10 +4,10 @@ import { describe, expect, it } from "vitest";
 import Home from "@/app/page";
 
 /**
- * Guards the spec's Out of Scope list. The regions that are still placeholders
- * — property grid, chat panel — must stay content-free until each becomes its
- * own feature, so these fail the moment real content, images, or links get
- * added to them by accident.
+ * Guards the spec's Out of Scope list. The one region still a placeholder — the
+ * chat panel — must stay content-free until it becomes its own feature, so
+ * these fail the moment real content, images, or links get added to it by
+ * accident.
  *
  * Built regions are excluded; their own content is covered by their own test
  * files. As each remaining region ships, add it to BUILT_REGIONS — do not
@@ -17,6 +17,7 @@ const BUILT_REGIONS = [
   "footer",
   "header",
   "section[aria-labelledby='hero-heading']",
+  "section[aria-labelledby='featured-properties-heading']",
 ];
 
 /** The rendered page with every built region removed. */

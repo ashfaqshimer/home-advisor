@@ -3,10 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import ChatPanel from "@/components/chat/ChatPanel";
 import Footer from "@/components/layout/Footer";
-import PropertyCard from "@/components/properties/PropertyCard";
-import PropertyGrid, {
-  PLACEHOLDER_CARD_COUNT,
-} from "@/components/properties/PropertyGrid";
+import PropertyGrid from "@/components/properties/PropertyGrid";
 
 /**
  * `getByText` matches the label <span> inside a Placeholder; the classes under
@@ -18,17 +15,10 @@ function region(label: string): HTMLElement {
   return parent;
 }
 
+// The property grid is no longer a placeholder region — its header, cards, and
+// fixture data are covered by `property-grid.test.tsx`. Only its place in the
+// shell is asserted here, alongside the other regions' layout guards.
 describe("PropertyGrid", () => {
-  it("renders one card per PLACEHOLDER_CARD_COUNT", () => {
-    const { container } = render(<PropertyGrid />);
-
-    // Asserted against the constant, not a literal, so the grid keeps working
-    // when the count changes — including to an odd number.
-    expect(container.querySelectorAll("article")).toHaveLength(
-      PLACEHOLDER_CARD_COUNT,
-    );
-  });
-
   it("is the target of the header's Listings link", () => {
     render(<PropertyGrid />);
     const section = screen.getByRole("region", { name: "Featured properties" });
@@ -37,32 +27,6 @@ describe("PropertyGrid", () => {
     // Class guard: without it an anchor jump parks the section flush against
     // the top edge. jsdom cannot verify the resulting offset.
     expect(section).toHaveClass("scroll-mt-24");
-  });
-
-  it("renders the section header regions above the cards", () => {
-    render(<PropertyGrid />);
-
-    for (const label of ["Eyebrow", "Section heading", "Section subcopy"]) {
-      expect(screen.getByText(label)).toBeInTheDocument();
-    }
-  });
-});
-
-describe("PropertyCard", () => {
-  it("has an image region above three shorter text regions", () => {
-    render(<PropertyCard />);
-
-    for (const label of ["Image", "Title / price", "Description", "Meta"]) {
-      expect(screen.getByText(label)).toBeInTheDocument();
-    }
-  });
-
-  it("keeps the image region on a fixed aspect ratio so rows have real height", () => {
-    render(<PropertyCard />);
-
-    // Class-presence guard, not a layout assertion — jsdom cannot compute the
-    // resulting box. Catches accidental removal of the ratio.
-    expect(region("Image")).toHaveClass("aspect-4/3");
   });
 });
 

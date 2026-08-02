@@ -30,11 +30,20 @@
   --color-muted: #7d817d; /* secondary copy */
   --color-band: #eef1ec; /* full-bleed section band behind the hero */
   --color-band-strong: #e4e4e2; /* one step darker: eyebrow pill, footer band */
+  --color-page: #fafaf9; /* default page background */
+  --color-surface: #ffffff; /* raised surfaces on --color-page: property cards */
 
   /* Display face for headlines. PLACEHOLDER: the mockup uses a high-contrast
      serif, but picking the real pairing is a global decision deferred to its
      own typography feature. Swapping this one line is the whole migration. */
   --font-display: Georgia, "Times New Roman", ui-serif, serif;
+}
+
+/* The page is off-white, not white, so the white property cards read as raised
+   rather than dissolving into the background. The hero and footer sit on their
+   own bands and are unaffected. */
+body {
+  background-color: var(--color-page);
 }
 
 /* Smooth scroll for the hero's `#chat` jump link. Opt-out, not opt-in — anyone

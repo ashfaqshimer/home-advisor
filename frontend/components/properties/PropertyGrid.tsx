@@ -1,23 +1,35 @@
-import Placeholder from "@/components/Placeholder";
 import PropertyCard from "@/components/properties/PropertyCard";
-
-/**
- * Card count is arbitrary scaffolding — the grid must not depend on it being
- * even. Change this number to sanity-check odd counts and short pages.
- */
-export const PLACEHOLDER_CARD_COUNT = 8;
+import { FEATURED_PROPERTIES } from "@/lib/properties";
 
 export default function PropertyGrid() {
   return (
     <section
       id="featured-properties"
-      aria-label="Featured properties"
+      /*
+        Named by the heading rather than an aria-label, so the section's
+        accessible name isn't declared in two places that can drift apart.
+      */
+      aria-labelledby="featured-properties-heading"
       className="flex scroll-mt-24 flex-col gap-8"
     >
       <div className="flex flex-col gap-3">
-        <Placeholder label="Eyebrow" className="h-6 w-40 max-w-full" />
-        <Placeholder label="Section heading" className="h-10 w-72 max-w-full" />
-        <Placeholder label="Section subcopy" className="h-10 w-full max-w-md" />
+        {/* Typed in sentence case and uppercased in CSS, so a screen reader
+            reads a phrase rather than spelling out initialisms. */}
+        <p className="text-xs font-semibold tracking-[0.14em] text-muted uppercase">
+          Handpicked for you
+        </p>
+
+        <h2
+          id="featured-properties-heading"
+          className="font-display text-3xl leading-tight text-ink sm:text-4xl"
+        >
+          Featured properties
+        </h2>
+
+        <p className="max-w-md text-sm leading-relaxed text-muted">
+          A curated selection across Colombo and the wider island — from city
+          apartments to coastal retreats.
+        </p>
       </div>
 
       {/*
@@ -25,8 +37,8 @@ export default function PropertyGrid() {
         column too — three-up would squeeze them below a usable width.
       */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        {Array.from({ length: PLACEHOLDER_CARD_COUNT }, (_, i) => (
-          <PropertyCard key={i} />
+        {FEATURED_PROPERTIES.map((property) => (
+          <PropertyCard key={property.id} property={property} />
         ))}
       </div>
     </section>

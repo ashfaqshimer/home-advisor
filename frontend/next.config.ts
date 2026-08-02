@@ -1,7 +1,24 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    /*
+      Property photos are Unsplash stand-ins until real listings exist — see the
+      note at the top of lib/properties.ts. Scoped to the one host serving them.
+
+      `search` is deliberately left unset. Setting it to "" would reject any URL
+      carrying a query string, and the fixture URLs pass `?w=1600&q=75&…` so the
+      optimizer downloads a sane source rather than a multi-megabyte original.
+    */
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        port: "",
+        pathname: "/photo-**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
