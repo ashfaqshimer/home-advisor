@@ -32,6 +32,7 @@
   --color-band-strong: #e4e4e2; /* one step darker: eyebrow pill, footer band */
   --color-page: #fafaf9; /* default page background */
   --color-surface: #ffffff; /* raised surfaces on --color-page: property cards */
+  --color-agent-bubble: #e6eeea; /* pale green: the agent's side of the chat */
 
   /* Display face for headlines. PLACEHOLDER: the mockup uses a high-contrast
      serif, but picking the real pairing is a global decision deferred to its

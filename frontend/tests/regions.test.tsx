@@ -5,16 +5,6 @@ import ChatPanel from "@/components/chat/ChatPanel";
 import Footer from "@/components/layout/Footer";
 import PropertyGrid from "@/components/properties/PropertyGrid";
 
-/**
- * `getByText` matches the label <span> inside a Placeholder; the classes under
- * test live on its parent <div>. This resolves the region itself.
- */
-function region(label: string): HTMLElement {
-  const parent = screen.getByText(label).parentElement;
-  if (!parent) throw new Error(`Placeholder "${label}" has no parent element`);
-  return parent;
-}
-
 // The property grid is no longer a placeholder region — its header, cards, and
 // fixture data are covered by `property-grid.test.tsx`. Only its place in the
 // shell is asserted here, alongside the other regions' layout guards.
@@ -30,37 +20,10 @@ describe("PropertyGrid", () => {
   });
 });
 
+// The chat panel is no longer a placeholder region — its header, seeded turns,
+// chips, and input are covered by `chat-panel.test.tsx`. Only its behaviour as a
+// column of the shell is asserted here.
 describe("ChatPanel", () => {
-  it("renders header, message list, chips, and input regions", () => {
-    render(<ChatPanel />);
-
-    for (const label of [
-      "Agent header",
-      "Message list (scrolls)",
-      "Prompt chips",
-      "Chat input",
-    ]) {
-      expect(screen.getByText(label)).toBeInTheDocument();
-    }
-  });
-
-  it("is a focusable target for the header CTA", () => {
-    render(<ChatPanel />);
-    const panel = screen.getByRole("region", { name: "AI agent chat" });
-
-    expect(panel).toHaveAttribute("id", "chat");
-    // Without tabIndex a #chat jump moves the viewport but not keyboard focus.
-    expect(panel).toHaveAttribute("tabindex", "-1");
-    // Scroll margin matches the sticky inset so the panel lands where it settles.
-    expect(panel).toHaveClass("scroll-mt-panel-inset");
-  });
-
-  it("has no interactive chat controls yet", () => {
-    const { container } = render(<ChatPanel />);
-
-    expect(container.querySelectorAll("input, textarea, button")).toHaveLength(0);
-  });
-
   it("caps its height and scrolls the message region when sticky", () => {
     render(<ChatPanel />);
 
@@ -72,10 +35,23 @@ describe("ChatPanel", () => {
       "lg:top-panel-inset",
       "lg:max-h-panel-max",
     );
-    expect(region("Message list (scrolls)")).toHaveClass(
-      "lg:overflow-y-auto",
-      "lg:min-h-0",
-    );
+    // `lg:flex-1` is what gives the list the leftover space to scroll inside;
+    // without it the panel grew past its cap and hid its own input.
+    expect(
+      screen.getByRole("list", { name: "Conversation with Home Advisor" }),
+    ).toHaveClass("lg:overflow-y-auto", "lg:flex-1");
+  });
+
+  it("keeps the header, chips, and input from absorbing the squeeze", () => {
+    render(<ChatPanel />);
+    const panel = screen.getByRole("region", { name: "AI agent chat" });
+
+    // Every direct child except the message list must be `shrink-0`, or a short
+    // viewport compresses the input instead of the conversation.
+    for (const child of Array.from(panel.children)) {
+      if (child.tagName === "UL") continue;
+      expect(child).toHaveClass("shrink-0");
+    }
   });
 });
 
