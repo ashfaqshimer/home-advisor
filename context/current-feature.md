@@ -37,26 +37,23 @@
   just append a correction under it.
 -->
 
-**Feature:** Chat Panel
+**Feature:** <!-- e.g. "Property search filters (price range, bedrooms, location)" -->
 
-**Spec:** `context/features/chat-panel/spec.md`
+**Spec:** <!-- context/features/<slug>/spec.md -->
 
 **Goal:**
-Replace the sticky chat panel's four placeholder blocks with the real static UI from
-`context/ui-interface.png`: an agent header, a seeded two-turn conversation, three
-suggestion chips, and a message input. It should look like a live conversation with
-the Home Advisor agent, but nothing responds yet — the backend doesn't exist.
+<!-- One or two sentences. What does "done" look like from the user's POV? -->
 
-**Status:** `In progress`
+**Status:** `Not started | In progress | Blocked | In review/testing | Done`
 
-**Branch:** `feature/chat-panel`
+**Branch:** <!-- e.g. feature/property-search-filters -->
 
 ### Approach / Key Decisions
 <!--
   Why you're building it this way — especially anything non-obvious.
   This is the highest-value section: code shows WHAT, this shows WHY.
 -->
-- TBD — to be worked out in conversation before/while building.
+-
 
 ### Files Touched
 <!-- Running list so Claude Code doesn't have to grep the whole repo to find scope -->
@@ -64,38 +61,17 @@ the Home Advisor agent, but nothing responds yet — the backend doesn't exist.
 
 ### Open Questions / Blockers
 <!-- Anything unresolved. Delete once resolved, don't let these pile up stale. -->
-- How to fix the `lg` message-list collapse: the page grid's `items-start` means
-  `lg:flex-1 lg:min-h-0` has nothing to fill. Needs a real height source on the
-  panel (min-height, or a height tied to `--spacing-panel-max`) — browser-verified,
-  jsdom can't see it.
+-
 
 ### Next Steps
 <!-- Ordered, small, actionable. This is what Claude Code should tackle first. -->
-1. Add the `#e6eeea` agent-bubble tint as an `@theme` token in `globals.css`.
-2. Create the seed-conversation fixture (`{ id, role: 'user' | 'agent', text }`)
-   and the chip strings in one typed place.
-3. Build the panel's four parts as static server markup: header band (avatar, name,
-   status dot), scrolling `<ul>` message list with speaker-labelled bubbles, chip
-   stack, pinned input + round send button (all controls `disabled`).
-4. Fix the `lg` collapse so only the message list scrolls and header/chips/input
-   stay pinned; verify at a 700px-tall viewport.
-5. Delete `Placeholder.tsx` with its last usage and drop the import from tests.
-6. Add `ChatPanel` to `BUILT_REGIONS`, update the stale assertions in
-   `tests/regions.test.tsx`, and write `tests/chat-panel.test.tsx`.
-7. Browser-verify (375 / 1024 / 1440, short viewport) over CDP; then `pnpm build`
-   and `pnpm test`.
+1.
+2.
+3.
 
 ### Explicitly Out of Scope (for now)
 <!-- Prevents Claude Code from "helpfully" expanding scope mid-task. -->
-- **Any real chat.** No `POST /chat`, no local echo, no canned replies on send, no
-  typing indicator, no streaming, no message persistence. Fully static markup.
-- **Chip click behaviour.** Chips render; they do nothing.
-- **Property cards inside messages.** The agent describes listings in prose only.
-- **Lead capture UI.**
-- **Mobile drawer / floating chat bubble.** Below `lg` the panel stays in normal flow
-  after the grid, as it does today.
-- **Markdown or rich text in bubbles.** Plain strings.
-- **Dark mode.**
+-
 
 ---
 
@@ -106,6 +82,45 @@ the Home Advisor agent, but nothing responds yet — the backend doesn't exist.
   Goal is "remind me what this was and where the bodies are buried," not a
   full changelog (git already has that).
 -->
+
+### Chat Panel — 2026-08-02
+- **What:** The last placeholder region, and the last shell stub of any kind. Static
+  agent UI: header band (avatar, name, status dot), four seeded turns from a typed
+  fixture, three suggestion chips, and a message input. Every control is real but
+  `disabled` — `POST /chat` doesn't exist, so a control that answered a click would
+  be lying. `Placeholder.tsx` is gone with its last usage.
+- **Key files:** `frontend/lib/chat.ts` (new — `ChatMessage` + seed conversation,
+  chips, speaker labels), `frontend/components/chat/ChatPanel.tsx`,
+  `frontend/app/globals.css` (`--color-agent-bubble`),
+  `frontend/tests/chat-panel.test.tsx`
+- **Gotchas/lessons:**
+  - **The `lg` collapse was misdiagnosed in the Site Header retro.** It was never
+    `items-start` — it was the empty placeholder. `flex-1` is `flex: 1 1 0%`, so a
+    region with a zero basis *and* no content resolves to zero height. Real messages
+    supply the content; a floor (`min-h-72`, `lg:min-h-64`) supplies the rest. That
+    floor must stay under the space left by header + chips + input, or the panel
+    pushes its own input off-screen at a short viewport. Measured stuck at 1280×700:
+    panel 652px = the cap, input fully visible, only the list scrolling.
+  - **A nested `<header>` reports a second `banner`.** Valid HTML inside a
+    `<section>`, but the role only narrows where the HTML-AAM scoping rule is
+    implemented; `page-structure.test.tsx` caught it as a duplicate landmark. It's a
+    plain `<div>` now — same call as the mobile menu using a `<ul>` over a nested
+    `<nav>`. **Third landmark-duplication trap in this shell; check before nesting.**
+  - `overflow-hidden` on the panel is what clips the header band to the rounded
+    corners, and is safe: only *ancestor* overflow breaks a sticky descendant, and
+    an element's own outline is painted outside the clip.
+  - The ~300px `lg` column is too narrow for the full input placeholder, which got
+    sliced mid-word against the send button until `text-ellipsis` was added. Only
+    visible in a screenshot — every test and the build passed either way.
+  - Colours confirmed in-browser a fourth time: brand `rgb(44, 74, 62)`, agent
+    bubble `rgb(230, 238, 234)`, band `rgb(228, 228, 226)`.
+  - The CDP driver had to be rebuilt again (it lives in `/tmp` and does not
+    survive). It is ~60 lines and dependency-free on Node 24; **note that Chrome
+    takes ~6s to open the debug port on this machine — poll `/json/list`, don't
+    sleep a fixed 2.5s.**
+- **Shell is now complete.** `scope-boundaries.test.tsx` guards bare page
+  scaffolding only; every region is in `BUILT_REGIONS`. Next frontend work has no
+  placeholder to replace — and the backend still does not exist (Phase 1).
 
 ### Featured Properties — 2026-08-02
 - **What:** The property grid's first real content. Section header (eyebrow, serif
