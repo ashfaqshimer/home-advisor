@@ -37,23 +37,26 @@
   just append a correction under it.
 -->
 
-**Feature:** <!-- e.g. "Property search filters (price range, bedrooms, location)" -->
+**Feature:** Chat Panel
 
-**Spec:** <!-- context/features/<slug>/spec.md -->
+**Spec:** `context/features/chat-panel/spec.md`
 
 **Goal:**
-<!-- One or two sentences. What does "done" look like from the user's POV? -->
+Replace the sticky chat panel's four placeholder blocks with the real static UI from
+`context/ui-interface.png`: an agent header, a seeded two-turn conversation, three
+suggestion chips, and a message input. It should look like a live conversation with
+the Home Advisor agent, but nothing responds yet — the backend doesn't exist.
 
-**Status:** `Not started | In progress | Blocked | In review/testing | Done`
+**Status:** `In progress`
 
-**Branch:** <!-- e.g. feature/property-search-filters -->
+**Branch:** `feature/chat-panel`
 
 ### Approach / Key Decisions
 <!--
   Why you're building it this way — especially anything non-obvious.
   This is the highest-value section: code shows WHAT, this shows WHY.
 -->
--
+- TBD — to be worked out in conversation before/while building.
 
 ### Files Touched
 <!-- Running list so Claude Code doesn't have to grep the whole repo to find scope -->
@@ -61,17 +64,38 @@
 
 ### Open Questions / Blockers
 <!-- Anything unresolved. Delete once resolved, don't let these pile up stale. -->
--
+- How to fix the `lg` message-list collapse: the page grid's `items-start` means
+  `lg:flex-1 lg:min-h-0` has nothing to fill. Needs a real height source on the
+  panel (min-height, or a height tied to `--spacing-panel-max`) — browser-verified,
+  jsdom can't see it.
 
 ### Next Steps
 <!-- Ordered, small, actionable. This is what Claude Code should tackle first. -->
-1.
-2.
-3.
+1. Add the `#e6eeea` agent-bubble tint as an `@theme` token in `globals.css`.
+2. Create the seed-conversation fixture (`{ id, role: 'user' | 'agent', text }`)
+   and the chip strings in one typed place.
+3. Build the panel's four parts as static server markup: header band (avatar, name,
+   status dot), scrolling `<ul>` message list with speaker-labelled bubbles, chip
+   stack, pinned input + round send button (all controls `disabled`).
+4. Fix the `lg` collapse so only the message list scrolls and header/chips/input
+   stay pinned; verify at a 700px-tall viewport.
+5. Delete `Placeholder.tsx` with its last usage and drop the import from tests.
+6. Add `ChatPanel` to `BUILT_REGIONS`, update the stale assertions in
+   `tests/regions.test.tsx`, and write `tests/chat-panel.test.tsx`.
+7. Browser-verify (375 / 1024 / 1440, short viewport) over CDP; then `pnpm build`
+   and `pnpm test`.
 
 ### Explicitly Out of Scope (for now)
 <!-- Prevents Claude Code from "helpfully" expanding scope mid-task. -->
--
+- **Any real chat.** No `POST /chat`, no local echo, no canned replies on send, no
+  typing indicator, no streaming, no message persistence. Fully static markup.
+- **Chip click behaviour.** Chips render; they do nothing.
+- **Property cards inside messages.** The agent describes listings in prose only.
+- **Lead capture UI.**
+- **Mobile drawer / floating chat bubble.** Below `lg` the panel stays in normal flow
+  after the grid, as it does today.
+- **Markdown or rich text in bubbles.** Plain strings.
+- **Dark mode.**
 
 ---
 
