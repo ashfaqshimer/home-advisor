@@ -37,31 +37,23 @@
   just append a correction under it.
 -->
 
-**Feature:** Featured Properties
+**Feature:** <!-- e.g. "Property search filters (price range, bedrooms, location)" -->
 
-**Spec:** `context/features/featured-properties/spec.md`
+**Spec:** <!-- context/features/<slug>/spec.md -->
 
 **Goal:**
-Replace the property grid's placeholder skeletons with a real section header and
-eight real property cards matching `context/ui-interface.png` — photo, location,
-name, price, blurb, and beds/baths/sqft — rendered from a local fixture, since no
-backend exists yet.
+<!-- One or two sentences. What does "done" look like from the user's POV? -->
 
-**Status:** `In progress`
+**Status:** `Not started | In progress | Blocked | In review/testing | Done`
 
-**Branch:** `feature/featured-properties`
+**Branch:** <!-- e.g. feature/property-search-filters -->
 
 ### Approach / Key Decisions
 <!--
   Why you're building it this way — especially anything non-obvious.
   This is the highest-value section: code shows WHAT, this shows WHY.
 -->
-- **TBD — to be worked out in conversation, not invented from the spec.**
-- Settled during spec: photos are remote Unsplash URLs via `next/image` +
-  `images.remotePatterns` (not CSS blocks, not committed JPGs); cards are
-  non-interactive `<article>`s because no detail pages exist.
-- Build order: this feature ships **before** `chat-panel`. The chat panel is the
-  last `Placeholder` consumer, so `Placeholder.tsx` gets deleted there, not here.
+-
 
 ### Files Touched
 <!-- Running list so Claude Code doesn't have to grep the whole repo to find scope -->
@@ -69,40 +61,17 @@ backend exists yet.
 
 ### Open Questions / Blockers
 <!-- Anything unresolved. Delete once resolved, don't let these pile up stale. -->
-- **Eyebrow colour.** "HANDPICKED" and "FOR YOU" sample within antialiasing noise
-  of each other at 5px (`#5f6f6d` vs `#697c80`), so the spec calls for one muted
-  colour — but it reads two-tone in the mockup. User reviewed and approved as-is;
-  revisit only if it looks wrong in a browser.
-- **`body` background** is the one change reaching outside the region. Low risk
-  (hero and footer have their own bands), flagged and approved.
+-
 
 ### Next Steps
 <!-- Ordered, small, actionable. This is what Claude Code should tackle first. -->
-1. Add `@theme` tokens (page surface `#fafaf9`, card surface `#ffffff`) and the
-   `body` background rule in `globals.css`.
-2. Allow `images.unsplash.com` in `frontend/next.config.ts`.
-3. Write `frontend/lib/properties.ts` — `Property` type + eight typed fixtures
-   with a "placeholder until `GET /properties`" comment.
-4. Rebuild `PropertyCard` against a `property` prop: image + location pill,
-   title/price row, blurb, divider, meta row with `aria-hidden` icons and correct
-   pluralisation.
-5. Rebuild `PropertyGrid`'s header (eyebrow, `h2`, subcopy) and map the fixtures;
-   swap `aria-label` for `aria-labelledby`; drop `PLACEHOLDER_CARD_COUNT`.
-6. Update `tests/scope-boundaries.test.tsx` (`BUILT_REGIONS`) and the stale
-   property-grid block in `tests/regions.test.tsx`.
-7. Add `tests/property-card.test.tsx`.
-8. `pnpm build` + `pnpm test`, then verify in a real browser at 375px and 1440px
-   (jsdom can't see the grid, equal-height rows, or `next/image` sizing).
+1.
+2.
+3.
 
 ### Explicitly Out of Scope (for now)
 <!-- Prevents Claude Code from "helpfully" expanding scope mid-task. -->
-- **Backend / API.** No `GET /properties`, no fetching, no loading states.
-- **Filters, sort, search, pagination, "view all".** The grid renders all eight.
-- **Property detail pages** and any card link or hover affordance.
-- **Real listing photos.** Unsplash URLs are stand-ins.
-- **Chat panel.** Its own spec at `context/features/chat-panel/spec.md`.
-- **Web fonts.** `font-display` stays the system serif stack.
-- **Dark mode.**
+-
 
 ---
 
@@ -113,6 +82,40 @@ backend exists yet.
   Goal is "remind me what this was and where the bodies are buried," not a
   full changelog (git already has that).
 -->
+
+### Featured Properties — 2026-08-02
+- **What:** The property grid's first real content. Section header (eyebrow, serif
+  `h2`, subcopy) plus eight cards — photo with a location pill, serif title and
+  brand-green price on one row, blurb, divider, beds/baths/sqft — rendered from a
+  local fixture. Cards are non-interactive; no detail pages exist.
+- **Key files:** `frontend/lib/properties.ts` (new — `Property` type + fixtures),
+  `frontend/components/properties/` (`PropertyCard`, `PropertyGrid`),
+  `frontend/next.config.ts` (`images.remotePatterns`),
+  `frontend/tests/property-grid.test.tsx`
+- **Gotchas/lessons:**
+  - **The Chrome minimum-window-width trap bit again**, exactly as the Hero entry
+    warned. `--window-size=375` renders the page wide and *crops* it, so the first
+    375px screenshot showed catastrophic overflow that did not exist. Only
+    `Emulation.setDeviceMetricsOverride` gives a real narrow viewport. The driver
+    used here is a dependency-free Node script over CDP (Node 24 has a global
+    `WebSocket`) — worth rebuilding rather than adding puppeteer.
+  - **Icons at 14px need eyes on them.** The first bed glyph passed lint, build,
+    and every test while rendering as a small flag. Cropping the meta row at
+    `deviceScaleFactor: 2` is the only thing that caught it.
+  - **Stock photos were matched to listings by looking at them**, then alt text
+    written from the image. Havelock Residences is an apartment, so it gets an
+    apartment building. Alt describes the photo, not the listing — the title is
+    already adjacent.
+  - `mt-auto` pins the meta row so dividers align across a row, but it collapses
+    to zero on the tallest card — hence `mb-4` on the description rather than a
+    margin on the divider, or that one card gets its rule jammed against the text.
+  - Don't set `search: ""` in `remotePatterns`: it rejects any URL with a query
+    string, and the fixture URLs pass `?w=1600&q=75` so the optimizer downloads a
+    sane source instead of a multi-megabyte original.
+  - `--color-brand` is confirmed correct a third time: the price samples green
+    through antialiasing and resolves to `rgb(44, 74, 62)` in the browser.
+- **Left for the chat-panel feature:** `Placeholder.tsx` is now down to a single
+  consumer (`ChatPanel`) — delete the file with its last usage.
 
 ### Site Header — 2026-08-02
 - **What:** Brand link (shared `Logo`), centred nav links as in-page anchors, a
