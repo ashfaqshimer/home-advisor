@@ -20,6 +20,10 @@ A real estate brokerage site for the Sri Lankan (Colombo-focused) market, built 
 
 The full spec — data models, endpoints, tool signatures, env vars, build phases — lives in [context/PROJECT_OVERVIEW.md](context/PROJECT_OVERVIEW.md). Read it before implementing anything; don't re-derive design decisions that are already settled there.
 
+## Branding
+
+The brand is **Home Advisor** — everywhere, including the AI agent's name. `context/ui-interface.png` is a visual reference for layout, spacing, and colour only; its "Terra & Co." / "Terra AI Agent" wording is placeholder art and must never be copied into the codebase. Same goes for the mockup's property listings, prices, and contact details — illustrative, not real content. Don't ask about this again.
+
 ## Architectural constraint (the point of the project)
 
 The agent uses a **hand-rolled tool-calling loop against the raw Gemini API — no LangChain, no LangGraph, no agent framework.** This is deliberate: demonstrating manual orchestration is a primary goal, not an implementation detail. Do not introduce an agent framework as a "simplification." A LangGraph migration is explicitly deferred to a documented v2.
