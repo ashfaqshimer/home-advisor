@@ -37,23 +37,31 @@
   just append a correction under it.
 -->
 
-**Feature:** <!-- e.g. "Property search filters (price range, bedrooms, location)" -->
+**Feature:** Featured Properties
 
-**Spec:** <!-- context/features/<slug>/spec.md -->
+**Spec:** `context/features/featured-properties/spec.md`
 
 **Goal:**
-<!-- One or two sentences. What does "done" look like from the user's POV? -->
+Replace the property grid's placeholder skeletons with a real section header and
+eight real property cards matching `context/ui-interface.png` — photo, location,
+name, price, blurb, and beds/baths/sqft — rendered from a local fixture, since no
+backend exists yet.
 
-**Status:** `Not started | In progress | Blocked | In review/testing | Done`
+**Status:** `In progress`
 
-**Branch:** <!-- e.g. feature/property-search-filters -->
+**Branch:** `feature/featured-properties`
 
 ### Approach / Key Decisions
 <!--
   Why you're building it this way — especially anything non-obvious.
   This is the highest-value section: code shows WHAT, this shows WHY.
 -->
--
+- **TBD — to be worked out in conversation, not invented from the spec.**
+- Settled during spec: photos are remote Unsplash URLs via `next/image` +
+  `images.remotePatterns` (not CSS blocks, not committed JPGs); cards are
+  non-interactive `<article>`s because no detail pages exist.
+- Build order: this feature ships **before** `chat-panel`. The chat panel is the
+  last `Placeholder` consumer, so `Placeholder.tsx` gets deleted there, not here.
 
 ### Files Touched
 <!-- Running list so Claude Code doesn't have to grep the whole repo to find scope -->
@@ -61,17 +69,40 @@
 
 ### Open Questions / Blockers
 <!-- Anything unresolved. Delete once resolved, don't let these pile up stale. -->
--
+- **Eyebrow colour.** "HANDPICKED" and "FOR YOU" sample within antialiasing noise
+  of each other at 5px (`#5f6f6d` vs `#697c80`), so the spec calls for one muted
+  colour — but it reads two-tone in the mockup. User reviewed and approved as-is;
+  revisit only if it looks wrong in a browser.
+- **`body` background** is the one change reaching outside the region. Low risk
+  (hero and footer have their own bands), flagged and approved.
 
 ### Next Steps
 <!-- Ordered, small, actionable. This is what Claude Code should tackle first. -->
-1.
-2.
-3.
+1. Add `@theme` tokens (page surface `#fafaf9`, card surface `#ffffff`) and the
+   `body` background rule in `globals.css`.
+2. Allow `images.unsplash.com` in `frontend/next.config.ts`.
+3. Write `frontend/lib/properties.ts` — `Property` type + eight typed fixtures
+   with a "placeholder until `GET /properties`" comment.
+4. Rebuild `PropertyCard` against a `property` prop: image + location pill,
+   title/price row, blurb, divider, meta row with `aria-hidden` icons and correct
+   pluralisation.
+5. Rebuild `PropertyGrid`'s header (eyebrow, `h2`, subcopy) and map the fixtures;
+   swap `aria-label` for `aria-labelledby`; drop `PLACEHOLDER_CARD_COUNT`.
+6. Update `tests/scope-boundaries.test.tsx` (`BUILT_REGIONS`) and the stale
+   property-grid block in `tests/regions.test.tsx`.
+7. Add `tests/property-card.test.tsx`.
+8. `pnpm build` + `pnpm test`, then verify in a real browser at 375px and 1440px
+   (jsdom can't see the grid, equal-height rows, or `next/image` sizing).
 
 ### Explicitly Out of Scope (for now)
 <!-- Prevents Claude Code from "helpfully" expanding scope mid-task. -->
--
+- **Backend / API.** No `GET /properties`, no fetching, no loading states.
+- **Filters, sort, search, pagination, "view all".** The grid renders all eight.
+- **Property detail pages** and any card link or hover affordance.
+- **Real listing photos.** Unsplash URLs are stand-ins.
+- **Chat panel.** Its own spec at `context/features/chat-panel/spec.md`.
+- **Web fonts.** `font-display` stays the system serif stack.
+- **Dark mode.**
 
 ---
 
